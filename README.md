@@ -122,6 +122,9 @@ Make sure you have these plugins installed:
 * Uses NMS navigation (requires skript-reflect)
 
 ---
+### 🧪 Tested Version
+
+Tested on 1.21.11
 
 ## 👤 Author
 
