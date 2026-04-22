@@ -43,6 +43,7 @@ Opens the main pet menu.
 ## 🖥️ GUI Menus
 
 ### Main Menu
+<img width="344" height="144" alt="image" src="https://github.com/user-attachments/assets/81247f5f-067d-4e97-b5a7-1adbce95e291" />
 
 * **Mobs** – Select your pet
 * **Despawn Pet** – Remove current pet
@@ -50,11 +51,13 @@ Opens the main pet menu.
 * **Rename Pet** – Rename your pet via chat
 
 ### Pet Selection
+<img width="343" height="135" alt="image" src="https://github.com/user-attachments/assets/ff596951-6871-490a-baa8-a501bc5bc490" />
 
 Choose from different animals.
 Spawning a new pet will automatically remove the old one.
 
 ### Particles Menu
+<img width="343" height="79" alt="image" src="https://github.com/user-attachments/assets/5cb6dad3-f873-4bf9-ba46-f478e772ac79" />
 
 Available effects:
 
