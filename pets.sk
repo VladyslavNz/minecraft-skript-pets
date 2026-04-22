@@ -1,0 +1,259 @@
+#PET SYSTEM
+
+
+# /pets GUI
+command /pets:
+    trigger:
+        open chest inventory with 3 rows named "&e&lPETS" to player
+
+        set slot 11 of player's current inventory to bone named "&a&lMobs"
+        set slot 13 of player's current inventory to barrier named "&c&lDespawn Pet"
+        set slot 15 of player's current inventory to blaze powder named "&d&lParticles"
+        set slot 22 of player's current inventory to name tag named "&e&lRename Pet"
+
+
+# INVENTORY CLICK
+on inventory click:
+    set {_name} to name of event-inventory
+    set {_uuid} to uuid of player
+    set {_item} to event-item
+
+    if {_item} is not set:
+        stop
+
+    # MAIN MENU 
+    if {_name} is "&e&lPETS":
+        cancel event
+
+        # OPEN MOB GUI
+        if name of {_item} is "&a&lMobs":
+            open chest inventory with 3 rows named "&a&lSelect Pet" to player
+
+            set slot 10 of player's current inventory to wolf spawn egg named "&aWolf"
+            set slot 11 of player's current inventory to cat spawn egg named "&aCat"
+            set slot 12 of player's current inventory to parrot spawn egg named "&aParrot"
+            set slot 13 of player's current inventory to fox spawn egg named "&aFox"
+            set slot 14 of player's current inventory to rabbit spawn egg named "&aRabbit"
+            set slot 15 of player's current inventory to bee spawn egg named "&aBee"
+            set slot 16 of player's current inventory to turtle spawn egg named "&aTurtle"
+            set slot 19 of player's current inventory to panda spawn egg named "&aPanda"
+            set slot 20 of player's current inventory to chicken spawn egg named "&aChicken"
+            set slot 21 of player's current inventory to cow spawn egg named "&aCow"
+
+        if name of {_item} is "&e&lRename Pet":
+            send "&eType your pet name in chat..." to player
+            set {pet::%{_uuid}%::renaming} to true
+            close player's inventory
+
+        # DESPAWN PET
+        if name of {_item} is "&c&lDespawn Pet":
+            if {pet::%{_uuid}%::entity} is not set:
+                send "&cNo pet active!" to player
+                stop
+
+            set {_pet} to {pet::%{_uuid}%::entity}
+
+            if {_pet} is alive:
+                kill {_pet}
+
+            delete {pet::%{_uuid}%::entity}
+
+            send "&cPet despawned!" to player
+            close player's inventory
+
+        # PARTICLES (FUTURE)
+        if name of {_item} is "&d&lParticles":
+            open chest inventory with 1 row named "&d&lParticles" to player
+
+            set slot 2 of player's current inventory to blaze powder named "&cFlame"
+            set slot 3 of player's current inventory to heart of the sea named "&dHearts"
+            set slot 4 of player's current inventory to slime ball named "&aSlime"
+            set slot 5 of player's current inventory to glowstone dust named "&6Magic"
+            set slot 6 of player's current inventory to barrier named "&7None"
+
+    # PARTICLE MENU 
+    if {_name} is "&d&lParticles":
+        cancel event
+
+        if name of {_item} is "&cFlame":
+            set {pet::%{_uuid}%::particle} to "flame"
+
+        if name of {_item} is "&dHearts":
+            set {pet::%{_uuid}%::particle} to "heart"
+
+        if name of {_item} is "&aSlime":
+            set {pet::%{_uuid}%::particle} to "slime"
+
+        if name of {_item} is "&6Magic":
+            set {pet::%{_uuid}%::particle} to "crit"
+
+        if name of {_item} is "&7None":
+            delete {pet::%{_uuid}%::particle}
+
+        send "&dParticle updated!" to player
+        close player's inventory
+
+    # PET SELECTION 
+    if {_name} is "&a&lSelect Pet":
+        cancel event
+        delete {_type}
+
+        if name of {_item} is "&aWolf":
+            set {_type} to "wolf"
+        if name of {_item} is "&aCat":
+            set {_type} to "cat"
+        if name of {_item} is "&aParrot":
+            set {_type} to "parrot"
+        if name of {_item} is "&aFox":
+            set {_type} to "fox"
+        if name of {_item} is "&aRabbit":
+            set {_type} to "rabbit"
+        if name of {_item} is "&aBee":
+            set {_type} to "bee"
+        if name of {_item} is "&aTurtle":
+            set {_type} to "turtle"
+        if name of {_item} is "&aPanda":
+            set {_type} to "panda"
+        if name of {_item} is "&aChicken":
+            set {_type} to "chicken"
+        if name of {_item} is "&aCow":
+            set {_type} to "cow"
+
+        if {_type} is not set:
+            stop
+
+        set {pet::%{_uuid}%::type} to {_type}
+
+        # REMOVE OLD PET
+        if {pet::%{_uuid}%::entity} is set:
+            set {_old} to {pet::%{_uuid}%::entity}
+            if {_old} is alive:
+                kill {_old}
+            delete {pet::%{_uuid}%::entity}
+
+        # SPAWN NEW PET
+        if {_type} is "wolf":
+            spawn wolf at player
+        if {_type} is "cat":
+            spawn cat at player
+        if {_type} is "parrot":
+            spawn parrot at player
+        if {_type} is "fox":
+            spawn fox at player
+        if {_type} is "rabbit":
+            spawn rabbit at player
+        if {_type} is "bee":
+            spawn bee at player
+        if {_type} is "turtle":
+            spawn turtle at player
+        if {_type} is "panda":
+            spawn panda at player
+        if {_type} is "chicken":
+            spawn chicken at player
+        if {_type} is "cow":
+            spawn cow at player
+
+        set {_pet} to last spawned entity
+        if {pet::%{_uuid}%::name} is set:
+            set custom name of {_pet} to "%{pet::%{_uuid}%::name}%"
+        else:
+            set custom name of {_pet} to "%{_type}%"
+        set {pet::%{_uuid}%::entity} to {_pet}
+
+        send "&aPet spawned: %{_type}%" to player
+        close player's inventory
+
+# FOLLOW SYSTEM
+every 10 ticks:
+    loop all players:
+        set {_uuid} to uuid of loop-player
+
+        if {pet::%{_uuid}%::entity} is set:
+            set {_pet} to {pet::%{_uuid}%::entity}
+
+            if {_pet} is alive:
+                set {_distance} to distance between {_pet} and loop-player
+
+                set {_handle} to {_pet}.getHandle()
+                set {_nav} to {_handle}.getNavigation()
+
+                if {_distance} > 1:
+                    make {_pet} look at loop-player
+
+                if {_distance} > 15:
+                    teleport {_pet} to loop-player
+
+                if {_distance} > 3:
+                    if {_distance} < 15:
+                        set {_loc} to location of loop-player
+                        {_nav}.moveTo({_loc}.getX(), {_loc}.getY(), {_loc}.getZ(), 1.2)
+
+                if {_distance} <= 3:
+                    {_nav}.stop()
+# PARTICLE SYSTEM
+every 10 ticks:
+    loop all players:
+        set {_uuid} to uuid of loop-player
+
+        if {pet::%{_uuid}%::entity} is set:
+            set {_pet} to {pet::%{_uuid}%::entity}
+
+            if {_pet} is alive:
+                if {pet::%{_uuid}%::particle} is set:
+
+                    set {_p} to {pet::%{_uuid}%::particle}
+                    set {_loc} to location of {_pet}
+
+                    add 0.5 to y-coordinate of {_loc}
+
+                    if {_p} is "flame":
+                        draw 5 flame at {_loc}
+
+                    if {_p} is "heart":
+                        draw 3 heart at {_loc}
+
+                    if {_p} is "crit":
+                        draw 6 crit at {_loc}
+
+                    if {_p} is "slime":
+                        draw 5 item_slime at {_loc}
+# REMOVE ON QUIT
+on quit:
+    set {_uuid} to uuid of player
+
+    if {pet::%{_uuid}%::entity} is set:
+        set {_pet} to {pet::%{_uuid}%::entity}
+
+        if {_pet} is alive:
+            kill {_pet}
+
+        delete {pet::%{_uuid}%::entity}
+
+# DAMAGE PROTECTION
+on damage:
+    set {_victim} to victim
+
+    loop all players:
+        set {_uuid} to uuid of loop-player
+
+        if {pet::%{_uuid}%::entity} is {_victim}:
+            cancel event
+
+# RENAME SYSTEM
+on chat:
+    set {_uuid} to uuid of player
+
+    if {pet::%{_uuid}%::renaming} is true:
+        cancel event
+
+        set {pet::%{_uuid}%::name} to message
+        delete {pet::%{_uuid}%::renaming}
+
+        send "&aPet name set to: &f%message%" to player
+
+        # APPLY NAME IF PET EXISTS
+        if {pet::%{_uuid}%::entity} is set:
+            set {_pet} to {pet::%{_uuid}%::entity}
+
+            if {_pet} is alive:
+                set custom name of {_pet} to message
