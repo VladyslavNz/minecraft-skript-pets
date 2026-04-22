@@ -35,10 +35,8 @@ on inventory click:
             set slot 13 of player's current inventory to fox spawn egg named "&aFox"
             set slot 14 of player's current inventory to rabbit spawn egg named "&aRabbit"
             set slot 15 of player's current inventory to bee spawn egg named "&aBee"
-            set slot 16 of player's current inventory to turtle spawn egg named "&aTurtle"
-            set slot 19 of player's current inventory to panda spawn egg named "&aPanda"
-            set slot 20 of player's current inventory to chicken spawn egg named "&aChicken"
-            set slot 21 of player's current inventory to cow spawn egg named "&aCow"
+            set slot 16 of player's current inventory to chicken spawn egg named "&aChicken"
+            set slot 19 of player's current inventory to cow spawn egg named "&aCow"
 
         if name of {_item} is "&e&lRename Pet":
             send "&eType your pet name in chat..." to player
@@ -110,10 +108,6 @@ on inventory click:
             set {_type} to "rabbit"
         if name of {_item} is "&aBee":
             set {_type} to "bee"
-        if name of {_item} is "&aTurtle":
-            set {_type} to "turtle"
-        if name of {_item} is "&aPanda":
-            set {_type} to "panda"
         if name of {_item} is "&aChicken":
             set {_type} to "chicken"
         if name of {_item} is "&aCow":
@@ -144,10 +138,6 @@ on inventory click:
             spawn rabbit at player
         if {_type} is "bee":
             spawn bee at player
-        if {_type} is "turtle":
-            spawn turtle at player
-        if {_type} is "panda":
-            spawn panda at player
         if {_type} is "chicken":
             spawn chicken at player
         if {_type} is "cow":
@@ -246,12 +236,20 @@ on chat:
     if {pet::%{_uuid}%::renaming} is true:
         cancel event
 
+        # LIMITS
+        if length of message > 12:
+            send "&cName too long! Max 12 characters." to player
+            stop
+
+        if length of message < 2:
+            send "&cName too short! Min 2 characters." to player
+            stop
+
         set {pet::%{_uuid}%::name} to message
         delete {pet::%{_uuid}%::renaming}
 
         send "&aPet name set to: &f%message%" to player
 
-        # APPLY NAME IF PET EXISTS
         if {pet::%{_uuid}%::entity} is set:
             set {_pet} to {pet::%{_uuid}%::entity}
 
